@@ -1,16 +1,3 @@
-local block_ws = false
-local window = ImGui_new({
-    Title = "WS Connection (SYNZ ONLY)"
-})
-window:Toggle("Block Signal", false, function(v)
-	if block_ws == v then
-		return
-	else
-		block_ws = v
-	end
-end)
-window:Render()
-
 local Services						= setmetatable({}, { __index = function(Self, Key) return game.GetService(game, Key) end })
 local Client						= Services.Players.LocalPlayer
 local SMethod						= (WebSocket and WebSocket.connect)
@@ -22,6 +9,20 @@ local Main							= function()
     local Closed					= false
 
 	if not Success then return end
+
+	-- Added UI to main so it only shows when successfully connected
+	local block_ws = false
+	local window = ImGui_new({
+		Title = "WS Connection (SYNZ ONLY)"
+	})
+	window:Toggle("Block Signal", false, function(v)
+		if block_ws == v then
+			return
+		else
+			block_ws = v
+		end
+	end)
+	window:Render()
 
 	WebSocket:Send(Services.HttpService:JSONEncode({
 		Method						= "Authorization",
