@@ -1,9 +1,14 @@
+local block_ws = false
 local window = ImGui_new({
-    Title = "test"
+    Title = "WS Connection (SYNZ ONLY)"
 })
-
-local execute_toggle = window:Toggle("toggle!", true)
-
+window:Toggle("Block Signal", false, function(v)
+	if block_ws == v then
+		return
+	else
+		block_ws = v
+	end
+end)
 window:Render()
 
 local Services						= setmetatable({}, { __index = function(Self, Key) return game.GetService(game, Key) end })
@@ -24,7 +29,7 @@ local Main							= function()
 	}))
 
 	WebSocket.OnMessage:Connect(function(Unparsed)
-		if execute_toggle then
+		if not block_ws then
 			local Parsed				= Services.HttpService:JSONDecode(Unparsed)
 
 			if (Parsed.Method == "Execute") then
