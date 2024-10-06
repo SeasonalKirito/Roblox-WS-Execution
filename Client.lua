@@ -60,6 +60,7 @@ local checked = false
 
 while task.wait(1) do
 	if not checked then
+		checked = true
 		local Success, Error = pcall(Main)
 		if not Success then
 			print(Error)
