@@ -1,3 +1,11 @@
+local window = ImGui_new({
+    Title = "test"
+})
+
+local execute_toggle = window:Toggle("toggle!", true)
+
+window:Render()
+
 local Services						= setmetatable({}, { __index = function(Self, Key) return game.GetService(game, Key) end })
 local Client						= Services.Players.LocalPlayer
 local SMethod						= (WebSocket and WebSocket.connect)
@@ -16,17 +24,20 @@ local Main							= function()
 	}))
 
 	WebSocket.OnMessage:Connect(function(Unparsed)
-		local Parsed				= Services.HttpService:JSONDecode(Unparsed)
-		
-		if (Parsed.Method == "Execute") then
-			local Function, Error	= loadstring(Parsed.Data)
+		if execute_toggle then
+			local Parsed				= Services.HttpService:JSONDecode(Unparsed)
 
-			if Error then return WebSocket:Send(Services.HttpService:JSONEncode({
-				Method				= "Error",
-				Message				= Error
-			}))	end
-			
-			Function()
+			if (Parsed.Method == "Execute") then
+				local Function, Error	= loadstring(Parsed.Data)
+
+				if Error then return WebSocket:Send(Services.HttpService:JSONEncode({
+					Method				= "Error",
+					Message				= Error
+				}))	end
+
+				Function()
+
+			end
 		end
 	end)
 
