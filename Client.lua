@@ -56,8 +56,17 @@ local Main							= function()
     repeat task.wait() until Closed
 end
 
-while task.wait(1) do
-	local Success, Error			= pcall(Main)
+local checked = false
 
-	if not Success then print(Error) end
+while task.wait(1) do
+	if not checked then
+		local Success, Error = pcall(Main)
+		if not Success then
+			print(Error)
+			break
+		end
+	else
+		print("Check failed, rejoin to try again, keep vscode open before autoexec!")
+		break
+	end
 end
