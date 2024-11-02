@@ -10,27 +10,12 @@ local Main							= function()
 
 	if not Success then return end
 
-	-- Added UI to main so it only shows when successfully connected
-	local block_ws = false
-	local window = ImGui_new({
-		Title = "WS Connection (SYNZ ONLY)"
-	})
-	window:Toggle("Block Signal", false, function(v)
-		if block_ws == v then
-			return
-		else
-			block_ws = v
-		end
-	end)
-	window:Render()
-
 	WebSocket:Send(Services.HttpService:JSONEncode({
 		Method						= "Authorization",
 		Name						= Client.Name
 	}))
 
 	WebSocket.OnMessage:Connect(function(Unparsed)
-		if not block_ws then
 			local Parsed				= Services.HttpService:JSONDecode(Unparsed)
 
 			if (Parsed.Method == "Execute") then
@@ -44,7 +29,6 @@ local Main							= function()
 				Function()
 
 			end
-		end
 	end)
 
     -- i fucking hate you electron
